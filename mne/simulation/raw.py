@@ -253,9 +253,6 @@ def simulate_raw(raw, stc, trans, src, bem, cov='simple',
     raw_data = np.zeros((len(info['ch_names']), len(times)))
 
     # figure out our cHPI, ECG, and blink dipoles
-    R, r0 = fit_sphere_to_headshape(info, verbose=False)[:2]
-    R /= 1000.
-    r0 /= 1000.
     ecg_rr = blink_rrs = exg_bem = hpi_rrs = None
     ecg = ecg and len(meg_picks) > 0
     chpi = chpi and len(meg_picks) > 0
@@ -267,6 +264,9 @@ def simulate_raw(raw, stc, trans, src, bem, cov='simple',
         raw_data[hpi_pick, :] = hpi_on
         _log_ch('cHPI status bits enbled and', info, hpi_pick)
     if blink or ecg:
+        R, r0 = fit_sphere_to_headshape(info, verbose=False)[:2]
+        R /= 1000.
+        r0 /= 1000.
         exg_bem = make_sphere_model(r0, head_radius=R,
                                     relative_radii=(0.97, 0.98, 0.99, 1.),
                                     sigmas=(0.33, 1.0, 0.004, 0.33),
@@ -478,6 +478,7 @@ def _iter_forward_solutions(info, trans, src, bem, exg_bem, dev_head_ts,
                                      [None], ['eeg'], n_jobs,
                                      verbose=False)[0]
         eegblink = _to_forward_dict(eegblink, eegnames)
+    else: eegblink = None
 
     # short circuit here if there are no MEG channels (don't need to iterate)
     if len(pick_types(info, meg=True)) == 0:
