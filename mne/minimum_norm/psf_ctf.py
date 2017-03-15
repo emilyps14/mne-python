@@ -276,7 +276,7 @@ def _get_matrix_from_inverse_operator(inverse_operator, forward, labels=None,
     # free orientation constraint not possible because apply_inverse would
     # combined components
     invmat_mat_op = apply_inverse(ev_id, inverse_operator, lambda2=lambda2,
-                                  method=method, pick_ori='normal')
+                                  method=method)
 
     logger.info("Dimension of inverse matrix: %s" % str(invmat_mat_op.shape))
 
